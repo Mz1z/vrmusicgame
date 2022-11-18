@@ -8,21 +8,14 @@
     <script src="libs/aframe-physics-system.min.js"></script>
 
     <!-- js start -->
-    
+    <!-- 加载谱面 -->
+<script src="songs/smz.js"></script>
 <script type="text/javascript">
-  // json谱面格式
-  var song = [
-    {1000: ['c','v']},
-    {1200: ['v']},
-  ];
+  // var song; // 为谱面文件
 
   // 全局变量游戏状态
   var game_status = 0; // 0表示没开，1表示开了
-  // 计分
-  var allhit = song.length;
-  var perfect = 0;
-  var good = 0;
-  var miss = 0;
+  
 
   // 现价音符箭头
   function add_music_char(_c){
@@ -45,16 +38,115 @@
           console.log('end animation');
           // 清除这个东西
           sceneEl.removeChild(el);
+          // 计入miss
+          miss ++;
+          show_score();
+          //  这里还没删除
+          var index = song_chars.indexOf(el);
+          song_chars.splice(i, 1);   // 删除这个元素
         });
-
-
-        
         // 向音符队列中加入音符
         song_chars.push(el);
-
     sceneEl.appendChild(el);
-
   }
+  // 添加跳舞的人
+  function add_dancer(){
+    var sceneEl = document.querySelector('a-scene');
+    var el = document.createElement('a-entity');
+    el.setAttribute('gltf-model', '#dance');
+    el.setAttribute('id', 'dancer');
+    el.setAttribute('scale', '1.6 1.6 1.6');
+    el.setAttribute('position', "0 0 -4");
+    el.setAttribute('animation-mixer', "");
+    sceneEl.appendChild(el);
+  }
+  // 显示积分
+  // 计分
+  var allhit = song.length;
+  var perfect = 0;
+  var good = 0;
+  var miss = 0;
+  function show_score(){
+    var el = document.querySelector('#score');
+    var text = "perfect:"+perfect+"\ngood:"+good+"\nmiss:"+miss;
+    el.object3D.visible = true;
+    el.setAttribute("value", text);
+  }
+  // 加载曲子
+  function load_song(){
+    // 直接全部整计时器
+      for (let i = 0; i < song.length; i ++) {
+        setTimeout(
+          function(){
+             // 出音符
+             if(song[i].left == 1){
+                add_music_char(0);
+             }
+             if(song[i].right == 1){
+               add_music_char(1);
+             }
+             if(song[i].up == 1){
+               add_music_char(2);
+             }
+             if(song[i].down == 1){
+               add_music_char(3);
+             }
+          }
+          ,song[i].time
+        );
+      }
+  }
+  // 检查有没有打中音符
+  function check_hit(_c){
+    var len = song_chars.length;
+    var pos_up = up_chars[_c].getAttribute('position');
+    for(let i = 0; i < len; i ++){
+      // console.log(song_chars[i].getAttribute('position'));
+      // x相等判断y
+      var pos_char = song_chars[i].getAttribute('position');
+
+      if (pos_char.x == pos_up.x){
+        if (Math.abs(pos_char.y - pos_up.y) < 0.3){
+          // 算打中
+          perfect ++;
+          show_score();
+          // 清除音符
+          var sceneEl = document.querySelector('a-scene');
+          sceneEl.removeChild(song_chars[i]);
+          song_chars.splice(i, 1);   // 删除这个元素
+          break;
+        }else if (Math.abs(pos_char.y - pos_up.y) < 1){
+          // 算打中
+          good ++;
+          show_score();
+          // 清除音符
+          var sceneEl = document.querySelector('a-scene');
+          sceneEl.removeChild(song_chars[i]);
+          song_chars.splice(i, 1);   // 删除这个元素
+          break;
+        }
+      }
+    }
+  }
+
+  function play_music(){
+    var music = document.querySelector('#bgm');
+    music.components.sound.playSound();
+    music.addEventListener('sound-ended', function (event) {
+          // 游戏结束
+          console.log('gameover');
+          var sceneEl = document.querySelector('a-scene');
+          var dancer = document.querySelector('#dancer');
+          sceneEl.removeChild(dancer);
+    });
+  }
+
+
+
+
+
+
+
 
   // 初始化游戏音符队列
   var song_chars = [];
@@ -90,12 +182,11 @@
 
       }
 
-      // 初始化音符队列并开始游戏
-      // 直接全部整计时器
-
       
   }
 
+
+// 用户操作交互
 AFRAME.registerComponent('log', {
   schema: {type: 'string'},
 
@@ -110,18 +201,39 @@ AFRAME.registerComponent('log', {
             console.log('c');
             up_chars[0].emit("hit");   // 发送自定义事件
             // 判断有没有打中
+            check_hit(0);
             
         }else if (e.key == "v"){
             console.log('v');
             up_chars[1].emit("hit");   // 发送自定义事件
+            check_hit(1);
+
         }else if (e.key == "b"){
             console.log('b');
             up_chars[2].emit("hit");   // 发送自定义事件
+            check_hit(2);
+
         }else if (e.key == "n"){
             console.log('n');
             up_chars[3].emit("hit");   // 发送自定义事件
+            check_hit(3);
+
         }else if (e.key == "0"){
             console.log('start!');
+            if (game_status == 0){
+              // 开始游戏
+              // 清除字
+              var sceneEl = document.querySelector('a-scene');
+              var text = document.querySelector('#start-text');
+              sceneEl.removeChild(text);
+
+              //加入跳舞小人
+              load_song();
+              add_dancer();
+              show_score();
+              play_music();
+
+            }
         }
         // 几个测试按键
         else if (e.key == "1"){
@@ -148,7 +260,7 @@ AFRAME.registerComponent('log', {
       <a-scene physics>
 
 <!--Entity to add background noise-->
-      <a-entity sound="src: url(assets/audio/smz.mp3); autoplay: true; loop:true; distanceModel:linear">
+      <a-entity id="bgm" sound="src: url(assets/audio/smz.mp3); autoplay: false; loop:false; distanceModel:linear">
       </a-entity>
 
 <!-- 动画测试 -->
@@ -163,8 +275,17 @@ AFRAME.registerComponent('log', {
     position="-3 3 -6"
     scale="5 5 5"
     font="mozillavr"
-  ></a-text>
-
+></a-text>
+<!-- 计分板 -->
+<a-text
+    id="score"
+    value="score"
+    color="tomato"
+    position="-4 3 -6"
+    scale="3 3 3"
+    font="dejavu"
+    visible="false"
+></a-text>
       <!-- 加载模型 -->
       <a-assets>
          <a-asset-item id="castle" src="assets/scene.gltf"></a-asset-item>
@@ -173,14 +294,19 @@ AFRAME.registerComponent('log', {
          <a-asset-item id="dance" src="assets/donghua.gltf"></a-asset-item>
       </a-assets>
 
-      <a-entity gltf-model="#dance" scale="1.6 1.6 1.6" position="0 0 -4" rotation="0 0 0" animation-mixer></a-entity>
+<!-- 打光 -->
+      <!-- <a-entity light="color: #FFF; intensity: 1.5" position="6 6 6"></a-entity> -->
+
+
+<!-- 桃子，摆设 -->
       <a-entity gltf-model="#castle" scale="0.1 0.1 0.1" position="-1.5 2.5 -4" rotation="0 45 0" dynamic-body></a-entity>
-      <!-- <a-entity gltf-model="#arr" scale="20 20 20" position="-1 2 -4" rotation="90 0 0" static-body></a-entity> -->
+
 
       <!-- 舞台 -->
       <a-plane position="0 0 -5" rotation="-90 0 0" width="5" height="4" color="#7BC8A4" static-body></a-plane>
       <a-sky color="#ECECEC"></a-sky>
 
+      <!-- 用于初始化游戏 -->
       <a-entity log="hello"></a-entity>
 
 <!-- 相机，还没弄好 -->
