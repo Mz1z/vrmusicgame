@@ -12,9 +12,52 @@
 <script type="text/javascript">
   // json谱面格式
   var song = [
-    1000: ['c','v'],
-    1200: ['v'],
+    {1000: ['c','v']},
+    {1200: ['v']},
   ];
+
+  // 现价音符箭头
+  function add_music_char(_c){
+    var x_start = -2;
+      var y = 0;
+      var z = -4.3;
+      var _rotation = ["90 0 0", "90 0 180", "180 90 90", "180 90 270"];
+      var i = 0;
+    var sceneEl = document.querySelector('a-scene');
+    var el = document.createElement('a-entity');
+        el.setAttribute('gltf-model', '#arr');
+        el.setAttribute('scale', '25 25 25');
+        el.setAttribute('position', (x_start+i*1.3)+" "+y+" "+z);
+        el.setAttribute('rotation', _rotation[i]);
+        el.setAttribute('static-body','');
+        el.setAttribute('color', "tomato");
+        el.setAttribute('animation', "property: position; to: -2 4.3 -4.3; dur: 2000; easing: linear; loop: true");
+        
+
+    sceneEl.appendChild(el);
+
+  }
+  // 初始化游戏，添加组件
+  window.onload = function init_game(){
+      console.log('init');
+      // 添加上方箭头
+      var x_start = -2;
+      var y = 4.2;
+      var z = -4.3;
+      //角度记录 90 0 0 左，90 0 180右，180 90 90 上， 180 90 270 下
+      var _rotation = ["90 0 0", "90 0 180", "180 90 90", "180 90 270"];
+      var sceneEl = document.querySelector('a-scene');
+      for (let i=0; i<4; i ++){
+        var el = document.createElement('a-entity');
+        el.setAttribute('gltf-model', '#arr');
+        el.setAttribute('scale', '25 25 25');
+        el.setAttribute('position', (x_start+i*1.3)+" "+y+" "+z);
+        el.setAttribute('rotation', _rotation[i]);
+        el.setAttribute('static-body','');
+        sceneEl.appendChild(el);
+      }
+      
+  }
 
 AFRAME.registerComponent('log', {
   schema: {type: 'string'},
@@ -28,12 +71,7 @@ AFRAME.registerComponent('log', {
         // console.log(e);
         if (e.key == "c"){
             console.log('c');
-            // 尝试创建实体
-            // var el = document.createElement('a-box');
-            // var sceneEl = document.querySelector('a-scene');
-            // el.setAttribute('scale', '0.5 0.5 0.5');
-            // el.setAttribute('position', '1 4 -3');
-            // sceneEl.appendChild(el);
+            add_music_char(1);
         }else if (e.key == "v"){
             console.log('v');
         }else if (e.key == "b"){
@@ -56,18 +94,13 @@ AFRAME.registerComponent('log', {
 
     <!-- <a-scene physics stats> -->
       <a-scene physics>
-      <!-- 音游标志点 -->
-      <a-box scale="0.5 0.5 0.5" position="-2 4.2 -4" rotation="0 0 0" color="#F27C7C" static-body></a-box>
-      <a-box scale="0.5 0.5 0.5" position="-1 4.2 -4" rotation="0 0 0" color="#F27C7C" static-body></a-box>
-      <a-box scale="0.5 0.5 0.5" position="0 4.2 -4" rotation="0 0 0" color="#F27C7C" static-body></a-box>
-      <a-box scale="0.5 0.5 0.5" position="1 4.2 -4" rotation="0 0 0" color="#F27C7C" static-body></a-box>
+
 <!--Entity to add background noise-->
       <a-entity sound="src: url(assets/audio/bg.mp3); autoplay: true; loop:true; distanceModel:linear">
       </a-entity>
 
-
-      <a-box scale="0.5 0.5 0.5" position="-2 0 -4" 
-          animation="property: position; to: -2 4.5 -4; dur: 3000; easing: linear; loop: true" color="tomato"></a-box>
+<!-- 动画测试 -->
+      <!-- <a-box scale="0.5 0.5 0.5" position="-2 0 -4" animation="property: position; to: -2 4.5 -4; dur: 3000; easing: linear; loop: true" color="tomato"></a-box> -->
 
 
 <!-- 显示文字 -->
@@ -81,7 +114,14 @@ AFRAME.registerComponent('log', {
   ></a-text>
 
       <!-- 人物 -->
-      <a-box scale="1 1 1" position="0 4 -4" rotation="0 45 0" color="#4CC3D9" dynamic-body></a-box>
+      <a-assets>
+         <a-asset-item id="castle" src="assets/scene.gltf"></a-asset-item>
+         <a-asset-item id="arr" src="assets/left.gltf"></a-asset-item>
+      </a-assets>
+
+
+      <a-entity gltf-model="#castle" scale="0.1 0.1 0.1" position="0 2.5 -4" rotation="0 45 0" dynamic-body></a-entity>
+      <!-- <a-entity gltf-model="#arr" scale="20 20 20" position="-1 2 -4" rotation="90 0 0" static-body></a-entity> -->
 
       <!-- 舞台 -->
       <a-plane position="0 0 -5" rotation="-90 0 0" width="5" height="4" color="#7BC8A4" static-body></a-plane>
@@ -97,11 +137,7 @@ AFRAME.registerComponent('log', {
                   material="color: black; shader: flat">
         </a-entity>
       </a-entity> -->
-
-
-
-
-
+        
 
 
 

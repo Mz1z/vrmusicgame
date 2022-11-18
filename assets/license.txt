@@ -1,0 +1,11 @@
+Model Information:
+* title:	Peach
+* source:	https://sketchfab.com/3d-models/peach-21e1712c27b847e393ac39214f2762a0
+* author:	Meerschaum Digital (https://sketchfab.com/meerschaumdigital)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Peach" (https://sketchfab.com/3d-models/peach-21e1712c27b847e393ac39214f2762a0) by Meerschaum Digital (https://sketchfab.com/meerschaumdigital) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
