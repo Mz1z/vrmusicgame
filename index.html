@@ -297,11 +297,6 @@ AFRAME.registerComponent('log', {
             add_music_char(3);
         }
     }); 
-    document.addEventListener('touchstart',function(e){
-        var ev = e||event;
-        console.log(ev.touches[0].clientX);
-        start_game(0);
-      });
   }
 
 });
