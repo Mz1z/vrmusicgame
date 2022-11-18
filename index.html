@@ -3,7 +3,7 @@
     <meta charset="utf-8">
     <!--Libraries & external scripts Import-->
     <script src="https://aframe.io/releases/1.1.0/aframe.min.js"></script>
-    <!-- <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
     
     <script src="libs/aframe-physics-system.min.js"></script>
 
@@ -18,6 +18,11 @@
 
   // 全局变量游戏状态
   var game_status = 0; // 0表示没开，1表示开了
+  // 计分
+  var allhit = song.length;
+  var perfect = 0;
+  var good = 0;
+  var miss = 0;
 
   // 现价音符箭头
   function add_music_char(_c){
@@ -86,6 +91,7 @@
       }
 
       // 初始化音符队列并开始游戏
+      // 直接全部整计时器
 
       
   }
@@ -103,6 +109,8 @@ AFRAME.registerComponent('log', {
         if (e.key == "c"){
             console.log('c');
             up_chars[0].emit("hit");   // 发送自定义事件
+            // 判断有没有打中
+            
         }else if (e.key == "v"){
             console.log('v');
             up_chars[1].emit("hit");   // 发送自定义事件
@@ -140,7 +148,7 @@ AFRAME.registerComponent('log', {
       <a-scene physics>
 
 <!--Entity to add background noise-->
-      <a-entity sound="src: url(assets/audio/bg.mp3); autoplay: true; loop:true; distanceModel:linear">
+      <a-entity sound="src: url(assets/audio/smz.mp3); autoplay: true; loop:true; distanceModel:linear">
       </a-entity>
 
 <!-- 动画测试 -->
@@ -157,14 +165,16 @@ AFRAME.registerComponent('log', {
     font="mozillavr"
   ></a-text>
 
-      <!-- 人物 -->
+      <!-- 加载模型 -->
       <a-assets>
          <a-asset-item id="castle" src="assets/scene.gltf"></a-asset-item>
          <a-asset-item id="arr" src="assets/left.gltf"></a-asset-item>
+
+         <a-asset-item id="dance" src="assets/donghua.gltf"></a-asset-item>
       </a-assets>
 
-
-      <a-entity gltf-model="#castle" scale="0.1 0.1 0.1" position="0 2.5 -4" rotation="0 45 0" dynamic-body></a-entity>
+      <a-entity gltf-model="#dance" scale="1.6 1.6 1.6" position="0 0 -4" rotation="0 0 0" animation-mixer></a-entity>
+      <a-entity gltf-model="#castle" scale="0.1 0.1 0.1" position="-1.5 2.5 -4" rotation="0 45 0" dynamic-body></a-entity>
       <!-- <a-entity gltf-model="#arr" scale="20 20 20" position="-1 2 -4" rotation="90 0 0" static-body></a-entity> -->
 
       <!-- 舞台 -->
