@@ -2,7 +2,7 @@
   <head>
     <meta charset="utf-8">
     <!--Libraries & external scripts Import-->
-    <script src="https://aframe.io/releases/1.1.0/aframe.min.js"></script>
+    <script src="libs/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
     
     <script src="libs/aframe-physics-system.min.js"></script>
@@ -22,11 +22,12 @@
     var x_start = -2;
       var y = 0;
       var z = -4.3;
-      var _rotation = ["90 0 0", "90 0 180", "180 90 90", "180 90 270"];
+      var _rotation = ["90 0 0", "90 0 0", "0 90 0", "0 90 0"];
+      var _id = ['#left', '#right', '#up', '#down'];
       var i = _c;
     var sceneEl = document.querySelector('a-scene');
     var el = document.createElement('a-entity');
-        el.setAttribute('gltf-model', '#arr');
+        el.setAttribute('gltf-model', _id[i]);
         el.setAttribute('scale', '25 25 25');
         el.setAttribute('position', (x_start+i*1.3)+" "+y+" "+z);
         el.setAttribute('rotation', _rotation[i]);
@@ -50,10 +51,15 @@
     sceneEl.appendChild(el);
   }
   // 添加跳舞的人
-  function add_dancer(){
+  function add_dancer(_character){
     var sceneEl = document.querySelector('a-scene');
     var el = document.createElement('a-entity');
-    el.setAttribute('gltf-model', '#dance');
+    if (_character == 0){
+      el.setAttribute('gltf-model', '#dance');
+    }else{
+      el.setAttribute('gltf-model', '#dance1');
+    }
+    
     el.setAttribute('id', 'dancer');
     el.setAttribute('scale', '1.6 1.6 1.6');
     el.setAttribute('position', "0 0 -4");
@@ -142,6 +148,20 @@
   }
 
 
+ function start_game(_character){
+  // 游戏正式开始
+  // 清除字
+              var sceneEl = document.querySelector('a-scene');
+              var text = document.querySelector('#start-text');
+              sceneEl.removeChild(text);
+
+              //加入跳舞小人
+              load_song();
+              add_dancer(_character);
+              show_score();
+              play_music();
+ }
+
 
 
 
@@ -151,7 +171,7 @@
   // 初始化游戏音符队列
   var song_chars = [];
   var up_chars = [];   // 顶部的方向键
-
+/*
   // 初始化游戏，添加组件
   window.onload = function init_game(){
       console.log('init');
@@ -184,8 +204,40 @@
 
       
   }
+*/
+    // 初始化游戏，添加组件
+  window.onload = function init_game(){
+      console.log('init');
+      // 添加上方箭头
+      var x_start = -2;
+      var y = 4.2;
+      var z = -4.3;
+      //角度记录 90 0 0 左，90 0 00右，0 90 0 上， 0 90 0 下
+      var _rotation = ["90 0 0", "90 0 0", "0 90 0", "0 90 0"];
+      var _id = ['#left', '#right', '#up', '#down'];
+      var sceneEl = document.querySelector('a-scene');
+      for (let i=0; i<4; i ++){
+        var el = document.createElement('a-entity');
+        el.setAttribute('gltf-model', _id[i]);
+        el.setAttribute('scale', '25 25 25');
+        el.setAttribute('position', (x_start+i*1.3)+" "+y+" "+z);
+        el.setAttribute('rotation', _rotation[i]);
+        // 尝试绑定动画 打击时的动画
+        el.setAttribute('animation__hit', "property: scale; to:35 35 35; dur:180; easing: linear;startEvents:hit");
+        
+        el.setAttribute('static-body','');
+        sceneEl.appendChild(el);
+        up_chars.push(el);
+        // 绑定还原大小的事件
+        up_chars[i].addEventListener('animationcomplete', function (event) {
+            // 还原初始大小
+            up_chars[i].setAttribute('scale', '25 25 25');
+        });
 
+      }
 
+      
+  }
 // 用户操作交互
 AFRAME.registerComponent('log', {
   schema: {type: 'string'},
@@ -222,16 +274,15 @@ AFRAME.registerComponent('log', {
             console.log('start!');
             if (game_status == 0){
               // 开始游戏
-              // 清除字
-              var sceneEl = document.querySelector('a-scene');
-              var text = document.querySelector('#start-text');
-              sceneEl.removeChild(text);
+              start_game(0);
 
-              //加入跳舞小人
-              load_song();
-              add_dancer();
-              show_score();
-              play_music();
+            }
+        }else if (e.key == "9"){
+          // 新模型火柴人
+            console.log('start!');
+            if (game_status == 0){
+              // 开始游戏
+              start_game(1);
 
             }
         }
@@ -246,6 +297,11 @@ AFRAME.registerComponent('log', {
             add_music_char(3);
         }
     }); 
+    document.addEventListener('touchstart',function(e){
+        var ev = e||event;
+        console.log(ev.touches[0].clientX);
+        start_game(0);
+      });
   }
 
 });
@@ -272,7 +328,7 @@ AFRAME.registerComponent('log', {
     id="start-text"
     value="Press '0' to Start"
     color="#BBB"
-    position="-3 3 -6"
+    position="-4 3 -8"
     scale="5 5 5"
     font="mozillavr"
 ></a-text>
@@ -289,9 +345,12 @@ AFRAME.registerComponent('log', {
       <!-- 加载模型 -->
       <a-assets>
          <a-asset-item id="castle" src="assets/scene.gltf"></a-asset-item>
-         <a-asset-item id="arr" src="assets/left.gltf"></a-asset-item>
-
+         <a-asset-item id="left" src="assets/left.gltf"></a-asset-item>
+          <a-asset-item id="right" src="assets/right.gltf"></a-asset-item>
+          <a-asset-item id="up" src="assets/up.gltf"></a-asset-item>
+          <a-asset-item id="down" src="assets/down.gltf"></a-asset-item>
          <a-asset-item id="dance" src="assets/donghua.gltf"></a-asset-item>
+         <a-asset-item id="dance1" src="assets/donghua_hcr.gltf"></a-asset-item>
       </a-assets>
 
 <!-- 打光 -->
@@ -303,11 +362,24 @@ AFRAME.registerComponent('log', {
 
 
       <!-- 舞台 -->
-      <a-plane position="0 0 -5" rotation="-90 0 0" width="5" height="4" color="#7BC8A4" static-body></a-plane>
-      <a-sky color="#ECECEC"></a-sky>
-
+      <a-plane 
+               src="assets/background/2.jpg"
+               normal-map="assets/background/2.jpg"
+               repeat="500 500"
+               normal-texture-repeat="500 500"
+               scale="500 500 1"
+               position="0 0 -5" rotation="-90 0 0" width="5" height="4" color="#7BC8A4" static-body></a-plane>
+      <a-sky src="assets/background/set.jpg" color="#ECECEC"></a-sky>
+<!-- src="assets/background/2.jpg"
+               normal-map="assets/background/2.jpg"
+               repeat="500 500"
+               normal-texture-repeat="500 500"
+               scale="500 500 1"-->
       <!-- 用于初始化游戏 -->
       <a-entity log="hello"></a-entity>
+        <!-- 相机位置 -->
+        <a-entity position="0 0 1">
+            <a-camera></a-camera></a-entity>
 
 <!-- 相机，还没弄好 -->
       <!-- <a-entity camera look-controls wasd-controls position="0 1 0">
