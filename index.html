@@ -1,0 +1,26 @@
+<html>
+  <head>
+    <script src="https://aframe.io/releases/1.1.0/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-physics-system@1.4.0/dist/aframe-physics-system.min.js"></script>
+
+  </head>
+  <body>
+
+
+    <a-scene physics fog="type: linear; color: #AAA">
+      <!-- 音游标志点 -->
+      <a-box scale="0.5 0.5 0.5" position="-2 4.2 -4" rotation="0 0 0" color="#F27C7C" static-body></a-box>
+      <a-box scale="0.5 0.5 0.5" position="-1 4.2 -4" rotation="0 0 0" color="#F27C7C" static-body></a-box>
+      <a-box scale="0.5 0.5 0.5" position="0 4.2 -4" rotation="0 0 0" color="#F27C7C" static-body></a-box>
+      <a-box scale="0.5 0.5 0.5" position="1 4.2 -4" rotation="0 0 0" color="#F27C7C" static-body></a-box>
+
+
+      <!-- 人物 -->
+      <a-box scale="1 1 1" position="0 4 -4" rotation="0 45 0" color="#4CC3D9" dynamic-body></a-box>
+
+      <!-- 舞台 -->
+      <a-plane position="0 0 -5" rotation="-90 0 0" width="5" height="4" color="#7BC8A4" static-body></a-plane>
+      <a-sky color="#ECECEC"></a-sky>
+    </a-scene>
+  </body>
+</html>
