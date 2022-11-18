@@ -1,19 +1,84 @@
 <html>
   <head>
+    <meta charset="utf-8">
+    <!--Libraries & external scripts Import-->
     <script src="https://aframe.io/releases/1.1.0/aframe.min.js"></script>
-    <script src="https://unpkg.com/aframe-physics-system@1.4.0/dist/aframe-physics-system.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script> -->
+    
+    <script src="libs/aframe-physics-system.min.js"></script>
 
+    <!-- js start -->
+    
+<script type="text/javascript">
+  // json谱面格式
+  var song = [
+    1000: ['c','v'],
+    1200: ['v'],
+  ];
+
+AFRAME.registerComponent('log', {
+  schema: {type: 'string'},
+
+  init: function () {
+    var stringToLog = this.data;
+    // 增加键盘监听 
+    console.log(stringToLog);
+    window.addEventListener('keydown',function(e){
+        // cvbn作为打击按键
+        // console.log(e);
+        if (e.key == "c"){
+            console.log('c');
+            // 尝试创建实体
+            // var el = document.createElement('a-box');
+            // var sceneEl = document.querySelector('a-scene');
+            // el.setAttribute('scale', '0.5 0.5 0.5');
+            // el.setAttribute('position', '1 4 -3');
+            // sceneEl.appendChild(el);
+        }else if (e.key == "v"){
+            console.log('v');
+        }else if (e.key == "b"){
+            console.log('b');
+        }else if (e.key == "n"){
+            console.log('n');
+        }else if (e.key == "0"){
+            console.log('start!');
+        }
+    }); 
+  }
+
+});
+
+
+
+</script>
   </head>
   <body>
 
-
-    <a-scene physics fog="type: linear; color: #AAA">
+    <!-- <a-scene physics stats> -->
+      <a-scene physics>
       <!-- 音游标志点 -->
       <a-box scale="0.5 0.5 0.5" position="-2 4.2 -4" rotation="0 0 0" color="#F27C7C" static-body></a-box>
       <a-box scale="0.5 0.5 0.5" position="-1 4.2 -4" rotation="0 0 0" color="#F27C7C" static-body></a-box>
       <a-box scale="0.5 0.5 0.5" position="0 4.2 -4" rotation="0 0 0" color="#F27C7C" static-body></a-box>
       <a-box scale="0.5 0.5 0.5" position="1 4.2 -4" rotation="0 0 0" color="#F27C7C" static-body></a-box>
+<!--Entity to add background noise-->
+      <a-entity sound="src: url(assets/audio/bg.mp3); autoplay: true; loop:true; distanceModel:linear">
+      </a-entity>
 
+
+      <a-box scale="0.5 0.5 0.5" position="-2 0 -4" 
+          animation="property: position; to: -2 4.5 -4; dur: 3000; easing: linear; loop: true" color="tomato"></a-box>
+
+
+<!-- 显示文字 -->
+<a-text
+    id="start-text"
+    value="Press '0' to Start"
+    color="#BBB"
+    position="-3 3 -6"
+    scale="5 5 5"
+    font="mozillavr"
+  ></a-text>
 
       <!-- 人物 -->
       <a-box scale="1 1 1" position="0 4 -4" rotation="0 45 0" color="#4CC3D9" dynamic-body></a-box>
@@ -21,6 +86,36 @@
       <!-- 舞台 -->
       <a-plane position="0 0 -5" rotation="-90 0 0" width="5" height="4" color="#7BC8A4" static-body></a-plane>
       <a-sky color="#ECECEC"></a-sky>
+
+      <a-entity log="hello"></a-entity>
+
+<!-- 相机，还没弄好 -->
+      <!-- <a-entity camera look-controls wasd-controls position="0 1 0">
+        <a-entity cursor="fuse: true; fuseTimeout: 500"
+                  position="0 0 -1"
+                  geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+                  material="color: black; shader: flat">
+        </a-entity>
+      </a-entity> -->
+
+
+
+
+
+
+
+
+
     </a-scene>
+
+    <!-- aframe end -->
+
+
+
+
+
+
+
+
   </body>
 </html>
