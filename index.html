@@ -6,6 +6,22 @@
     <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
     
     <script src="libs/aframe-physics-system.min.js"></script>
+      
+      <!--转换界面所需要的js脚本文件-->
+    <script src="https://unpkg.com/aframe-event-set-component@5/dist/aframe-event-set-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-layout-component@5.3.0/dist/aframe-layout-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-template-component@3.2.1/dist/aframe-template-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-proxy-event-component@2.1.0/dist/aframe-proxy-event-component.min.js"></script>
+      <!-- 可重用图片链接模板 -->
+    <script id="link" type="text/html">
+      <a-entity class="link"
+        geometry="primitive: plane; height: 1; width: 1"
+        material="shader: flat; src: ${thumb}"
+        event-set__mouseenter="scale: 1.2 1.2 1"
+        event-set__mouseleave="scale: 1 1 1"
+        event-set__click="_target: #background; _delay: 300; material.src: ${src}"
+        proxy-event="event: click; to: #background; as: fade"></a-entity>
+    </script>
 
     <!-- js start -->
     <!-- 加载谱面 -->
@@ -339,6 +355,7 @@ AFRAME.registerComponent('log', {
 ></a-text>
       <!-- 加载模型 -->
       <a-assets>
+          <!-- 箭头音符以及人物模型所需文件-->
          <a-asset-item id="castle" src="assets/scene.gltf"></a-asset-item>
          <a-asset-item id="left" src="assets/left.gltf"></a-asset-item>
           <a-asset-item id="right" src="assets/right.gltf"></a-asset-item>
@@ -346,6 +363,11 @@ AFRAME.registerComponent('log', {
           <a-asset-item id="down" src="assets/down.gltf"></a-asset-item>
          <a-asset-item id="dance" src="assets/donghua.gltf"></a-asset-item>
          <a-asset-item id="dance1" src="assets/donghua_hcr.gltf"></a-asset-item>
+          <!-- 场景切换所需文件-->
+          <img id="set" crossorigin="anonymous" src="assets/background/set.jpg">
+        <img id="set-icon" crossorigin="anonymous" src="assets/background/set.jpg">
+        <img id="sky" crossorigin="anonymous" src="assets/background/sky.jpg">
+        <img id="sky-icon" crossorigin="anonymous" src="assets/background/sky.jpg">
       </a-assets>
 
 <!-- 打光 -->
@@ -354,6 +376,49 @@ AFRAME.registerComponent('log', {
 
 <!-- 桃子，摆设 -->
       <a-entity gltf-model="#castle" scale="0.1 0.1 0.1" position="-1.5 2.5 -4" rotation="0 45 0" dynamic-body></a-entity>
+          
+          <!-- 背景图片-周围环境 -->
+      <a-sky id="background" 
+             radius="10" 
+             src="#set" 
+             animation__fade="property: components.material.material.color; type: color; from: #FFF; to: #000; dur: 300; startEvents: fade" 
+             animation__fadeback="property: components.material.material.color; type: color; from: #000; to: #FFF; dur: 300; startEvents: animationcomplete__fade" 
+             material="" geometry="" scale="" _delay="300"></a-sky>
+
+      <!-- 背景切换链接 -->
+          <!-- 主图-->
+        <a-entity template="src: #link" data-src="#set" data-thumb="#set-icon" position="-3 0.5 -4">
+            <a-entity class="link" 
+                      geometry="primitive: plane; height: 1; width: 1" 
+                      material="shader: flat; src: #set-icon" 
+                      event-set__mouseenter="scale: 1.2 1.2 1" 
+                      event-set__mouseleave="scale: 1 1 1" 
+                      event-set__click="_target: #background; _delay: 300; material.src: #set" 
+                      proxy-event="event: click; to: #background; as: fade" 
+                      scale=""></a-entity>
+          </a-entity>
+          <!-- 空图 -->
+        <a-entity template="src: #link" data-src="#sky" data-thumb="#sky-icon" position="3 0.5 -4">
+            <a-entity class="link" 
+                      geometry="primitive: plane; height: 1; width: 1" 
+                      material="shader: flat; src: #sky-icon" 
+                      event-set__mouseenter="scale: 1.2 1.2 1" 
+                      event-set__mouseleave="scale: 1 1 1" 
+                      event-set__click="_target: #background; _delay: 300; material.src: #sky" 
+                      proxy-event="event: click; to: #background; as: fade" 
+                      scale=""></a-entity>
+          </a-entity>
+
+      <!-- cursor -->
+      <a-entity camera="" look-controls="" wasd-controls="" position="" rotation="">
+        <a-cursor id="cursor" 
+                  animation__click="property: scale; startEvents: click; from: 0.5 0.5 0.5; to: 5 5 5; dur: 150" 
+                  animation__fusing="property: fusing; startEvents: fusing; from: 5 5 5; to: 0.5 0.5 0.5; dur: 1500" 
+                  event-set__mouseenter="_event: mouseenter; color: springgreen" 
+                  event-set__mouseleave="_event: mouseleave; color: black" 
+                  raycaster="objects: .link" 
+                  material="" cursor="" geometry="" position="" color="black"></a-cursor>
+      </a-entity>
 
 
       <!-- 舞台 -->
@@ -364,8 +429,8 @@ AFRAME.registerComponent('log', {
                normal-texture-repeat="500 500"
                scale="500 500 1"
                position="0 0 -5" rotation="-90 0 0" width="5" height="4" color="#7BC8A4" static-body></a-plane>
-      <a-sky src="assets/background/set.jpg" color="#ECECEC"></a-sky>
-<!-- src="assets/background/2.jpg"
+<!--      <a-sky src="assets/background/set.jpg" color="#ECECEC"></a-sky>
+ src="assets/background/2.jpg"
                normal-map="assets/background/2.jpg"
                repeat="500 500"
                normal-texture-repeat="500 500"
