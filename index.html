@@ -151,8 +151,14 @@
     }
   }
 
-  function play_music(){
-    var music = document.querySelector('#bgm');
+  function play_music(_s){
+    var music = null;
+    if (_s == 0){
+      music = document.querySelector('#bgm');
+    }else{
+      music = document.querySelector('#bgm2');
+    }
+    
     music.components.sound.playSound();
     music.addEventListener('sound-ended', function (event) {
           // 游戏结束
@@ -175,7 +181,7 @@
               load_song();
               add_dancer(_character);
               show_score();
-              play_music();
+              play_music(_character);
  }
 
 
@@ -337,6 +343,8 @@ AFRAME.registerComponent('log', {
 <!--Entity to add background noise-->
       <a-entity id="bgm" sound="src: url(assets/audio/smz.mp3); autoplay: false; loop:false; distanceModel:linear">
       </a-entity>
+      <a-entity id="bgm2" sound="src: url(assets/audio/bg2.mp3); autoplay: false; loop:false; distanceModel:linear">
+      </a-entity>
 
 <!-- 动画测试 -->
       <!-- <a-box scale="0.5 0.5 0.5" position="-2 0 -4" animation="property: position; to: -2 4.5 -4; dur: 3000; easing: linear; loop: true" color="tomato"></a-box> -->
@@ -345,7 +353,7 @@ AFRAME.registerComponent('log', {
 <!-- 显示文字 -->
 <a-text
     id="start-text"
-    value="Press '0' to Start"
+    value="Press 0/9 to Start"
     color="#BBB"
     position="-4 3 -8"
     scale="5 5 5"
