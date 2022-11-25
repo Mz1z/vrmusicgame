@@ -292,6 +292,9 @@ AFRAME.registerComponent('log', {
               // 开始游戏
               start_game(0);
 
+            }else{
+                var dancer = document.querySelector('#dancer');
+                dancer.setAttribute('gltf-model', '#dance');
             }
         }else if (e.key == "9"){
           // 新模型火柴人
@@ -300,6 +303,10 @@ AFRAME.registerComponent('log', {
               // 开始游戏
               start_game(1);
 
+            }else{
+                // 更换角色
+                var dancer = document.querySelector('#dancer');
+                dancer.setAttribute('gltf-model', '#dance1');
             }
         }
         // 几个测试按键
@@ -379,7 +386,6 @@ AFRAME.registerComponent('log', {
           
           <!-- 背景图片-周围环境 -->
       <a-sky id="background" 
-             radius="10" 
              src="#set" 
              animation__fade="property: components.material.material.color; type: color; from: #FFF; to: #000; dur: 300; startEvents: fade" 
              animation__fadeback="property: components.material.material.color; type: color; from: #000; to: #FFF; dur: 300; startEvents: animationcomplete__fade" 
