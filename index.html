@@ -291,7 +291,7 @@ AFRAME.registerComponent('log', {
             if (game_status == 0){
               // 开始游戏
               start_game(0);
-
+              game_status = 1;
             }else{
                 var dancer = document.querySelector('#dancer');
                 dancer.setAttribute('gltf-model', '#dance');
@@ -302,6 +302,7 @@ AFRAME.registerComponent('log', {
             if (game_status == 0){
               // 开始游戏
               start_game(1);
+              game_status = 1;
 
             }else{
                 // 更换角色
